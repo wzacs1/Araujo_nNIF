@@ -1,0 +1,75 @@
+---
+title: "Yost Lab 16S Seq Analysis with ANCOM-BC"
+author: "W. Zac Stephens"
+date: "12/28/2021"
+output: html_document
+---
+
+# Setup
+
+microbiomeMarker package is used to wrap ANCOM-BC and to read in qiime2 data easily.
+
+```{r}
+library(tidyverse)
+library(phyloseq)
+library(microbiomeMarker)
+```
+
+# Read in qiime artefacts
+```{r}
+ps <- microbiomeMarker::import_qiime2(otu_qza = "qza/table_bySeqID_wPhyla.qza",
+                    taxa_qza = "qza/taxonomy.qza",
+                    refseq_qza = "qza/repseq_wPhyla.qza",
+                    tree_qza = "qza/tree_root_wPhyla.qza",
+                    sam_tab = "sampleSheet.txt")
+```
+
+# Subset to different organs and remove absent taxa in subsetted data.
+```{r}
+ps_st <- subset_samples(ps, Organ == "Stool")
+ps_st <- prune_taxa(taxa_sums(ps_st) > 0, ps_st)
+ps_pf <- subset_samples(ps, Organ == "PF")
+ps_pf <- prune_taxa(taxa_sums(ps_pf) > 0, ps_pf)
+```
+
+```{r}
+ps
+```
+
+```{r}
+ps_st
+```
+
+```{r}
+ps_pf
+```
+
+
+# Run ANCOM-BC and plot:
+
+Run ANCOM-BC
+```{r}
+ps_pf_ab_all_g <- run_ancombc(ps_pf, group = "Treatment", formula = "Treatment", zero_cut = 0.90, struc_zero = FALSE, neg_lb = FALSE, conserve = TRUE, taxa_rank = "Genus")
+ps_st_ab_all_g <- run_ancombc(ps_st, group = "Treatment", formula = "Treatment", zero_cut = 0.90, struc_zero = FALSE, neg_lb = FALSE, conserve = TRUE, taxa_rank = "Genus")
+```
+
+Plot peritoneal fluid results:
+```{r}
+plot_ef_dot(ps_pf_ab_all_g, label_level = 1)
+```
+
+Plot abundances of differential groups in peritoneal fluid:
+```{r}
+plot_abundance(ps_pf_ab_all_g, label_level = 1, group = "Treatment") + scale_x_log10()
+```
+
+Plot stool results:
+```{r}
+plot_ef_dot(ps_st_ab_all_g, label_level = 1)
+```
+
+Plot abundances of differential groups in stool:
+```{r}
+plot_abundance(ps_st_ab_all_g, label_level = 1, group = "Treatment" ) + scale_x_log10()
+```
+
