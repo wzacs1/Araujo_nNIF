@@ -34,7 +34,12 @@ qiime feature-table summarize --i-table qza/table_bySeqID_wPhyla_Stool.qza --m-s
 qiime diversity core-metrics-phylogenetic --i-table qza/table_bySeqID_wPhyla_PF.qza --i-phylogeny qza/tree_root.qza --output-dir div/PF --m-metadata-file $MAP --p-n-jobs-or-threads $NJOBS --p-sampling-depth 4476
 qiime diversity core-metrics-phylogenetic --i-table qza/table_bySeqID_wPhyla_Stool.qza --i-phylogeny qza/tree_root.qza --output-dir div/Stool --m-metadata-file $MAP --p-n-jobs-or-threads $NJOBS --p-sampling-depth 160198
 qiime diversity core-metrics-phylogenetic --i-table qza/table_bySeqID_wPhyla.qza --output-dir div/All --p-sampling-depth 4476 --i-phylogeny qza/tree_root.qza --m-metadata-file $MAP --p-n-jobs-or-threads $NJOBS
-
+# Copy the even depth rarefied table with all samples back to qza folder for taxa summarization and export. Most useful for clear plotting:
+cp div/All/rarefied_table.qza  qza/rarefied_table_4476_bySeqID_wPhyla.qza
+qiime taxa collapse --i-table qza/rarefied_table_4476_bySeqID_wPhyla.qza --i-taxonomy qza/taxonomy.qza --p-level 6 --o-collapsed-table qza/rarefied_table_4476_bySeqID_wPhyla_l6.qza
+mkdir -p biom
+qiime tools export --input-path qza/rarefied_table_4476_bySeqID_wPhyla_l6.qza --output-path biom/
+biom convert --to-tsv -i biom/feature-table.biom -o biom/feature-table_l6.tsv
 
 # Test if treatment groups are significantly different (Figure 4D):
 for Organ in div/Stool div/PF

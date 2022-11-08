@@ -24,7 +24,7 @@ ps <- microbiomeMarker::import_qiime2(otu_qza = "qza/table_bySeqID_wPhyla.qza",
                     sam_tab = "sampleSheet.txt")
 ```
 
-# Subset to different organs and remove absent taxa in subsetted data.
+# Subset to different organs and remove taxa not present in an organ
 ```{r}
 ps_st <- subset_samples(ps, Organ == "Stool")
 ps_st <- prune_taxa(taxa_sums(ps_st) > 0, ps_st)
@@ -45,7 +45,7 @@ ps_pf
 ```
 
 
-# Run ANCOM-BC and plot:
+##  Run ANCOM-BC on different organs and plot:
 
 Run ANCOM-BC
 ```{r}
@@ -72,4 +72,15 @@ Plot abundances of differential groups in stool:
 ```{r}
 plot_abundance(ps_st_ab_all_g, label_level = 1, group = "Treatment" ) + scale_x_log10()
 ```
+
+## Contrast just the NIF and vehicle to assess which are different due to inhibiting NETs alone:
+```{r}
+ps_pf_contrast_NIF_veh <- run_ancombc(ps_pf, group = "Treatment", formula = "Treatment", zero_cut = 0.90, struc_zero = FALSE, neg_lb = FALSE, conserve = TRUE, taxa_rank = "Genus", contrast = c("Vehicle", "NIF"))
+ps_st_contrast_NIF_veh <- run_ancombc(ps_st, group = "Treatment", formula = "Treatment", zero_cut = 0.90, struc_zero = FALSE, neg_lb = FALSE, conserve = TRUE, taxa_rank = "Genus", contrast = c("Vehicle", "NIF"))
+```
+
+
+
+
+
 
