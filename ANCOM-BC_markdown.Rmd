@@ -72,14 +72,30 @@ Plot abundances of differential groups in stool:
 ```{r}
 plot_abundance(ps_st_ab_all_g, label_level = 1, group = "Treatment" ) + scale_x_log10()
 ```
+## Individual contrasts with vehicle control
 
-## Contrast just the NIF and vehicle to assess which are different due to inhibiting NETs alone:
+Related to figure 4F and G, to test which genera are different from vehicle control mice and assess the effect of NET inhibition alone (contrast vehicle with nNIF)
 ```{r}
-ps_pf_contrast_NIF_veh <- run_ancombc(ps_pf, group = "Treatment", formula = "Treatment", zero_cut = 0.90, struc_zero = FALSE, neg_lb = FALSE, conserve = TRUE, taxa_rank = "Genus", contrast = c("Vehicle", "NIF"))
-ps_st_contrast_NIF_veh <- run_ancombc(ps_st, group = "Treatment", formula = "Treatment", zero_cut = 0.90, struc_zero = FALSE, neg_lb = FALSE, conserve = TRUE, taxa_rank = "Genus", contrast = c("Vehicle", "NIF"))
+ps_pf_cont_veh_nif <- run_ancombc(ps_pf, group = "Treatment", formula = "Treatment", zero_cut = 0.90, struc_zero = FALSE, neg_lb = FALSE, conserve = TRUE, taxa_rank = "Genus", contrast = c("Vehicle", "NIF"))
+ps_pf_cont_veh_mero <- run_ancombc(ps_pf, group = "Treatment", formula = "Treatment", zero_cut = 0.90, struc_zero = FALSE, neg_lb = FALSE, conserve = TRUE, taxa_rank = "Genus", contrast = c("Vehicle", "Meropenem"))
+ps_pf_cont_veh_meronif <- run_ancombc(ps_pf, group = "Treatment", formula = "Treatment", zero_cut = 0.90, struc_zero = FALSE, neg_lb = FALSE, conserve = TRUE, taxa_rank = "Genus", contrast = c("Vehicle", "NIF_Meropenem"))
+# For stool:
+ps_st_cont_veh_nif <- run_ancombc(ps_st, group = "Treatment", formula = "Treatment", zero_cut = 0.90, struc_zero = FALSE, neg_lb = FALSE, conserve = TRUE, taxa_rank = "Genus", contrast = c("Vehicle", "NIF"))
+ps_st_cont_veh_mero <- run_ancombc(ps_st, group = "Treatment", formula = "Treatment", zero_cut = 0.90, struc_zero = FALSE, neg_lb = FALSE, conserve = TRUE, taxa_rank = "Genus", contrast = c("Vehicle", "Meropenem"))
+ps_st_cont_veh_meronif <- run_ancombc(ps_st, group = "Treatment", formula = "Treatment", zero_cut = 0.90, struc_zero = FALSE, neg_lb = FALSE, conserve = TRUE, taxa_rank = "Genus", contrast = c("Vehicle", "NIF_Meropenem"))
 ```
 
+```{r}
+marker_table(ps_pf_cont_veh_nif)
+```
 
+```{r}
+marker_table(ps_st_cont_veh_nif)
+```
+
+```{r}
+plot_ef_bar(ps_pf_cont_veh_nif)
+```
 
 
 
